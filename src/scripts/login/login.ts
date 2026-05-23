@@ -1,7 +1,7 @@
 const clientId = '79aab9b8746344ebb0edb4367327f0fb';
 const redirectUri = 'http://127.0.0.1:4321/';
 
-const scope = 'user-read-private user-read-email';
+const scope = 'user-read-private user-read-email playlist-read-private';
 const authUrl = new URL("https://accounts.spotify.com/authorize");
 
 // If code is in URL, this is the redirect
@@ -77,6 +77,7 @@ if (loginBtn) {
 
 async function login() {
     console.log("Hello Login");
+    localStorage.clear();
 
     const codeVerifier = generateRandomString(64);
     const hashed = await sha256(codeVerifier);

@@ -1,5 +1,4 @@
 async function getUser(){
-    console.log("Hello User");
     const profilePicture = document.getElementById("profilePicture") as HTMLImageElement;
     const userName = document.getElementById("userName");
 
