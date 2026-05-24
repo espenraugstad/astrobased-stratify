@@ -3,19 +3,26 @@ import type { Playlist, MergePhase } from "../scripts/types.ts";
 
 interface PlaylistItemProps {
     playlist: Playlist;
-    onSelection: Dispatch<SetStateAction<Playlist[]>>;
-    onTarget: Dispatch<SetStateAction<Playlist | null>>;
+    sourceIds: Playlist[];
+    setSourceIds: Dispatch<SetStateAction<Playlist[]>>;
+    setTargetId: Dispatch<SetStateAction<Playlist | null>>;
     targetId: Playlist | null;
     mergePhase: MergePhase;
 }
 
-export default function PlaylistItem({ playlist, onSelection, onTarget, targetId, mergePhase }: PlaylistItemProps) {
+export default function PlaylistItem({ playlist, sourceIds, setSourceIds, setTargetId, targetId, mergePhase }: PlaylistItemProps) {
 
     const [selected, setSelected] = useState(false);
     const [isTarget, setIsTarget] = useState(false);
 
     const imageUrl = playlist.images?.[0]?.url;
     const altImageUrl = `https://placehold.co/64?text=${playlist.name.slice(0, 2)}`;
+
+    // When rendering, check if we are restarting, then remove all selections from source and target 
+    if(sourceIds.length === 0 && (selected || isTarget)){
+        setSelected(false);
+        setIsTarget(false);
+    }
 
     function toggleSelection() {
 
@@ -33,7 +40,7 @@ export default function PlaylistItem({ playlist, onSelection, onTarget, targetId
                 setIsTarget(false);
                 setSelected(false);
                 // Remove it from the target state in the parent component
-                onTarget((prev) => null);
+                setTargetId(null);
             } else {
                 // This playlist is not the target.
                 // Only allow selection of this if another playlist is not already targeted
@@ -42,7 +49,7 @@ export default function PlaylistItem({ playlist, onSelection, onTarget, targetId
                     console.log(targetId);
                     setIsTarget(true);
                     setSelected(true);
-                    onTarget((prev) => playlist);
+                    setTargetId(playlist);
                 }
             }
         }
@@ -51,7 +58,7 @@ export default function PlaylistItem({ playlist, onSelection, onTarget, targetId
         if (mergePhase === "source") {
             setIsTarget(false);
             // Update parent state of selection
-            onSelection((previousState) => {
+            setSourceIds((previousState) => {
                 const isSelected = previousState.some((p) => p.id === playlist.id);
 
                 if (isSelected) {

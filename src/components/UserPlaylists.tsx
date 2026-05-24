@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Playlist, MergePhase } from "../scripts/types.ts";
 import PlaylistItem from "./PaylistItem.tsx";
+import MergeProgressDialog from "./MergeProgressDialog.tsx";
 
 export default function UserPlaylists() {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -115,11 +116,26 @@ export default function UserPlaylists() {
                         <button onClick={()=>{setMergePhase("merge")}} disabled={sourceIds.length === 0} className="my-4 mr-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Merge playlists &#8594;</button>
                     </div>}
                 </section>
+                {mergePhase === "merge" && (
+                    <MergeProgressDialog 
+                    sources={sourceIds}
+                    setSourceIds={setSourceIds}
+                    setTargetId={setTargetId}
+                    target={targetId}
+                    setMergePhase={setMergePhase}
+                    />
+                )}
 
             </section>
             <section>
                 {filteredPlaylists.map((playlist) => (
-                    <PlaylistItem key={playlist.id} mergePhase={mergePhase} playlist={playlist} onSelection={setSourceIds} onTarget={setTargetId} targetId={targetId}/>
+                    <PlaylistItem key={playlist.id} 
+                        mergePhase={mergePhase} 
+                        playlist={playlist} 
+                        sourceIds={sourceIds}
+                        setSourceIds={setSourceIds} 
+                        setTargetId={setTargetId} 
+                        targetId={targetId}/>
                 ))}
             </section>
 
