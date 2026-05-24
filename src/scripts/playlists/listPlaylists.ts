@@ -7,20 +7,20 @@ async function listPlaylists() {
 
     playlistsDiv.innerText = "Here by playlists";
 
-    let playlists = await getPlaylistBatch();
+    let playlists = await getPlaylists("https://api.spotify.com/v1/me/playlists?limit=50&offset=0");
     console.log(playlists);
-    
+
 
 }
 
-async function getPlaylistBatch(offset: number = 0, playlists: any[] = []) {
+async function getPlaylists(link: string, playlists: any[] = []) {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
         return [];
     }
 
-    const res = await fetch("https://api.spotify.com/v1/me/playlists?limit=50&offset=0", {
+    const res = await fetch(link, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,
@@ -32,9 +32,15 @@ async function getPlaylistBatch(offset: number = 0, playlists: any[] = []) {
         console.error(res);
     } else {
         const playlistData = await res.json();
-        return playlistData;
+        console.log(playlistData);
+        playlists = playlists.concat(playlistData.items);
 
+        const nextLink = playlistData.next;
+        if(nextLink){
+            return await getPlaylists(nextLink, playlists);
+        } else {
+            return playlists;
+        }
     }
 }
-
 listPlaylists();

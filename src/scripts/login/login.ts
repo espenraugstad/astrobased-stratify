@@ -36,7 +36,6 @@ async function getToken(code: string) {
         return;
     } else {
         console.log("Code Verifier");
-        console.log(codeVerifier)
     }
 
     const url = "https://accounts.spotify.com/api/token";
@@ -55,7 +54,6 @@ async function getToken(code: string) {
     }
 
     const body = await fetch(url, payload);
-    console.log(body);
     if (body.status != 200) {
         console.error(body)
     } else {

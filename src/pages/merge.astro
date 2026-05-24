@@ -2,12 +2,14 @@
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import MergePlaylists from "../components/MergePlaylists.astro";
+import UserPlaylists from "../components/UserPlaylists.tsx";
 ---
 
 <Layout title="Stratify">
     <Navbar />
     <main class="w-full max-w-4xl mx-auto h-full flex-1 flex flex-col items-center pt-12">
         <h1 class="text-4xl font-bold mb-8  ">Merge Playlists</h1>
-        <MergePlaylists />
+        <!-- <MergePlaylists /> -->
+         <UserPlaylists client:load/>
     </main>
 </Layout>
