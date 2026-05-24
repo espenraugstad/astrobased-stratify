@@ -8,4 +8,4 @@ export interface Playlist {
   }
 }
 
-export type PlaylistSelectionType = "source" | "target";
+export type MergePhase = "source" | "target" | "merge";

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Playlist, PlaylistSelectionType } from "../scripts/types.ts";
+import type { Playlist, MergePhase } from "../scripts/types.ts";
 import PlaylistItem from "./PaylistItem.tsx";
 
 export default function UserPlaylists() {
@@ -7,8 +7,9 @@ export default function UserPlaylists() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedPlaylists, setSelectedPlaylists] = useState<Playlist[]>([]);
-    const [selectionType, setSelectionType] = useState<PlaylistSelectionType>("source");
+    const [sourceIds, setSourceIds] = useState<Playlist[]>([]);
+    const [targetId, setTargetId] = useState<Playlist | null>(null);
+    const [mergePhase, setMergePhase] = useState<MergePhase>("source");
     const [showSelected, setShowSelected] = useState(false);
 
     useEffect(() => {
@@ -60,7 +61,7 @@ export default function UserPlaylists() {
 
     const filteredPlaylists = playlists.filter((playlist) => {
         if (showSelected) {
-            return selectedPlaylists.some((p) => p.id === playlist.id);
+            return sourceIds.some((p) => p.id === playlist.id);
         } else {
             const query = searchQuery.toLowerCase();
 
@@ -76,13 +77,6 @@ export default function UserPlaylists() {
         setShowSelected(!showSelected);
     }
 
-    // Function to move between selecting source or target or merging
-    function newStep(){
-        if(selectionType === "source"){
-            setSelectionType("target");
-        }
-    }
-
     // Different states
     if (loading) return <div><p>Loading playlists...</p></div>;
     if (error) return <div><p>Error: {error}</p></div>;
@@ -93,17 +87,39 @@ export default function UserPlaylists() {
             <section className="mb-4">
                 <label htmlFor="searchPlaylists" className="text-lg font-medium">Search playlists by title or owner.</label>
                 <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} id="searchPlaylists" type="text" placeholder="Search for playlists" className="mb-2 border-1 p-2 w-full" />
-                <div>
-                    <p>Selected playlists: <span>{selectedPlaylists.length}</span></p>
-                </div>
-                <div className="my-4">
-                    <button onClick={newStep} disabled={selectedPlaylists.length === 0} className="my-4 mr-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Select {selectionType === "target" ? "Source Playlists" : "Target Playlist"} </button>
-                    <button onClick={toggleSelected} disabled={selectedPlaylists.length === 0 && !showSelected} className="my-4 ml-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Show {showSelected ? "All" : "Selected"} Playlists</button>
-                </div>
+                {/*                 <div>
+                    <p>Selected playlists: <span>{sourceIds.length}</span></p>
+                </div> */}
+                {/*                 <div className="my-4">
+                    <button onClick={newStep} disabled={sourceIds.length === 0} className="my-4 mr-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Select {mergePhase === "target" ? "Source Playlists" : "Target Playlist"} </button>
+                    <button onClick={toggleSelected} disabled={sourceIds.length === 0 && !showSelected} className="my-4 ml-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Show {showSelected ? "All" : "Selected"} Playlists</button>
+                </div> */}
+
+                <section className="mt-8">
+                    {mergePhase === "source" && <h2 className="text-xl font-bold">Select playlists you want to merge from</h2>}
+                    {mergePhase === "target" && <h2 className="text-xl font-bold">Select the target playlist</h2>}
+
+                    <div className="flex justify-between">
+                        <p>Selected playlists: <span>{sourceIds.length}</span></p>
+                        <div className="flex items-center">
+                            <input onChange={toggleSelected} className="mr-1" type="checkbox" name="showSelected" id="showSelected" />
+                            <label htmlFor="showSelected">Only show selected</label>
+                        </div>
+                    </div>
+
+                    {mergePhase === "source" && <div className="flex justify-end">
+                        <button onClick={()=>{setMergePhase("target")}} disabled={sourceIds.length === 0} className="my-4 mr-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Select target playlist &#8594;</button>
+                    </div>}
+                    {mergePhase === "target" && <div className="flex justify-between">
+                        <button onClick={()=>{setMergePhase("source")}} disabled={sourceIds.length === 0} className="my-4 mr-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">&#8592; Select source playlists</button>
+                        <button onClick={()=>{setMergePhase("merge")}} disabled={sourceIds.length === 0} className="my-4 mr-2 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-green-700 hover:cursor-pointer">Merge playlists &#8594;</button>
+                    </div>}
+                </section>
+
             </section>
             <section>
                 {filteredPlaylists.map((playlist) => (
-                    <PlaylistItem key={playlist.id} selectionType={selectionType} playlist={playlist} onSelection={setSelectedPlaylists} />
+                    <PlaylistItem key={playlist.id} mergePhase={mergePhase} playlist={playlist} onSelection={setSourceIds} onTarget={setTargetId} targetId={targetId}/>
                 ))}
             </section>
 
