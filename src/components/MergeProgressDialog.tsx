@@ -22,7 +22,7 @@ export default function MergeProgressDialog({ sources, target, setMergePhase, se
         async function runMerge(){
             try{
                 await performMerge({sources, target, setStatus, setProgress});
-                setStatus("Merge complete");
+                
                 setMergeComplete(true);
             } catch(err){
                 setStatus("Error merging playlists. Please try again.");
@@ -45,6 +45,6 @@ export default function MergeProgressDialog({ sources, target, setMergePhase, se
             <h2 className="text-2xl font-bold">Merging Playlists</h2>
             <p className="my-4">{status}</p>
             <progress value={progress} max={100}>{progress}</progress>
-            <button className="m-4 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 hover:bg-green-700 hover:cursor-pointer" onClick={closeDialog}>Done</button>
+            <button disabled={!mergeComplete} className="disabled:bg-slate-300 disabled:cursor-not-allowed m-4 w-48 h-14 text-sm text-white font-bold rounded-full bg-green-900 hover:bg-green-700 hover:cursor-pointer" onClick={closeDialog}>Done</button>
         </dialog>)
 }

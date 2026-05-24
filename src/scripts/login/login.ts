@@ -1,7 +1,7 @@
 const clientId = '79aab9b8746344ebb0edb4367327f0fb';
 const redirectUri = 'http://127.0.0.1:4321/';
 
-const scope = 'user-read-private user-read-email playlist-read-private';
+const scope = 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private';
 const authUrl = new URL("https://accounts.spotify.com/authorize");
 
 // If code is in URL, this is the redirect

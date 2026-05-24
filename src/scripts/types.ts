@@ -8,4 +8,13 @@ export interface Playlist {
   }
 }
 
+export interface PlaylistTrackObject {
+
+  item: {
+    id: string;
+    uri: string;
+  }
+
+}
+
 export type MergePhase = "source" | "target" | "merge";
