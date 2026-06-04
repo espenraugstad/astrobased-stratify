@@ -1,4 +1,4 @@
-import { use, useState, type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import type { Playlist, MergePhase } from "../scripts/types.ts";
 
 interface PlaylistItemProps {
