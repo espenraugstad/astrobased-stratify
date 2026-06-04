@@ -1,4 +1,5 @@
 async function getUser(){
+
     const profilePicture = document.getElementById("profilePicture") as HTMLImageElement;
     const userName = document.getElementById("userName");
 
@@ -25,7 +26,6 @@ async function getUser(){
         console.error(res);
     } else {
         const userData = await res.json();
-        console.log(userData);
         userName.innerText = userData.display_name;
         profilePicture.src = userData.images[0].url;
     }

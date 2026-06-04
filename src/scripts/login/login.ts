@@ -1,5 +1,12 @@
+const isProd = import.meta.env.PROD;
+
 const clientId = '79aab9b8746344ebb0edb4367327f0fb';
-const redirectUri = 'http://127.0.0.1:4321/';
+let redirectUri = '';
+if (isProd) {
+    redirectUri = 'https://stratify-app.com/';
+} else {
+    redirectUri = 'http://127.0.0.1:4321/';
+}
 
 const scope = 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private';
 const authUrl = new URL("https://accounts.spotify.com/authorize");
@@ -15,12 +22,9 @@ async function checkForCode() {
     if (err) {
         console.log("Unable to login");
         console.error(err);
-    } else {
-        console.log(code);
     }
 
     if (code) {
-        console.log("Getting token");
         await getToken(code);
     } else {
         console.log("Not getting token");
@@ -34,8 +38,6 @@ async function getToken(code: string) {
 
     if (!codeVerifier) {
         return;
-    } else {
-        console.log("Code Verifier");
     }
 
     const url = "https://accounts.spotify.com/api/token";
@@ -58,10 +60,9 @@ async function getToken(code: string) {
         console.error(body)
     } else {
         const response = await body.json();
-        console.log(response);
 
         localStorage.setItem('access_token', response.access_token);
-        window.location.href="/dashboard";
+        window.location.href = "/dashboard";
     }
 
 }
@@ -74,7 +75,6 @@ if (loginBtn) {
 }
 
 async function login() {
-    console.log("Hello Login");
     localStorage.clear();
 
     const codeVerifier = generateRandomString(64);

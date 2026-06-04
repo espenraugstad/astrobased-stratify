@@ -9,8 +9,6 @@ interface PerformMerge {
 }
 
 export async function performMerge({ sources, target, setStatus, setProgress }: PerformMerge) {
-    console.log(sources);
-    console.log(target);
     if (!sources) {
         alert("No source found. Try again.");
         return;
@@ -72,7 +70,6 @@ async function addItemsToTarget(items: Set<string>, targetId: string, setProgres
         itemChunks.push(chunk);
     }
 
-    console.log(itemChunks);
 
     for (const chunk of itemChunks) {
         const res = await fetch(url, {
@@ -85,7 +82,6 @@ async function addItemsToTarget(items: Set<string>, targetId: string, setProgres
             })
         });
 
-        console.log(res);
         setProgress((previous) => previous + (25 / itemChunks.length));
     }
 
@@ -94,19 +90,13 @@ async function addItemsToTarget(items: Set<string>, targetId: string, setProgres
 
 function merge(sourceItems: PlaylistTrackObject[], targetItems: PlaylistTrackObject[], setProgress: Dispatch<SetStateAction<number>>) {
 
-    console.log(sourceItems);
 
     const sourcesSet = new Set(sourceItems.map((track) => track.item.uri));
     setProgress(25);
     const targetSet = new Set(targetItems.map((track) => track.item.uri));
     setProgress(50);
     const difference = sourcesSet.difference(targetSet);
-    /* console.log("Source tracks");
-    console.log(sourcesSet);
-    console.log("Target tracks");
-    console.log(targetSet);
-    console.log("Tracks to be added");
-    console.log(difference); */
+
     return difference;
 }
 
@@ -136,8 +126,7 @@ async function getPlaylistItems(playlistId: string, setProgress: Dispatch<SetSta
     } else {
         const data = await res.json();
         items = items.concat(data.items);
-        console.log("Fetching playlist items");
-        console.log(data);
+
         setProgress((prev) => prev + (100 / (Math.ceil(data.total / 100))));
 
         const nextLink = data.next;
