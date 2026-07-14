@@ -3,7 +3,7 @@ const isProd = import.meta.env.PROD;
 const clientId = '79aab9b8746344ebb0edb4367327f0fb';
 let redirectUri = '';
 if (isProd) {
-    redirectUri = 'https://stratify-app.com/';
+    redirectUri = 'https://tracktician.netlify.app/';
 } else {
     redirectUri = 'http://127.0.0.1:4321/';
 }
